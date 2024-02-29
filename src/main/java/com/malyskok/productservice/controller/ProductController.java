@@ -22,6 +22,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    @GetMapping
     public Flux<ProductDto> getAll() {
         return productService.getAll();
     }
@@ -50,5 +51,12 @@ public class ProductController {
     @DeleteMapping("{id}")
     public Mono<Void> deleteProduct(@PathVariable String id) {
         return productService.deleteProduct(id);
+    }
+
+    @GetMapping("price-range")
+    public Flux<ProductDto> getByPriceRange(@RequestParam Integer min,
+                                            @RequestParam Integer max) {
+        return productService
+                .getByPriceRange(min, max);
     }
 }

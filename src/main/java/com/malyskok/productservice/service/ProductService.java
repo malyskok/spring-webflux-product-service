@@ -11,6 +11,7 @@ import com.malyskok.productservice.dto.ProductDto;
 import com.malyskok.productservice.repository.ProductRepository;
 import com.malyskok.productservice.util.EntityDtoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Range;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -53,5 +54,10 @@ public class ProductService {
 
     public Mono<Void> deleteProduct(String id){
         return productRepository.deleteById(id);
+    }
+
+    public Flux<ProductDto> getByPriceRange(Integer min, Integer max) {
+        return productRepository.findByPriceBetween(Range.closed(min, max))
+                .map(EntityDtoUtil::toDto);
     }
 }
