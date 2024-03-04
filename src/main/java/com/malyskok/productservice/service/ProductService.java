@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 public class ProductService {
 
@@ -29,6 +31,7 @@ public class ProductService {
     }
 
     public Mono<ProductDto> getProductById(String id) {
+        throwRandomError();
         return productRepository
                 .findById(id)
                 .map(EntityDtoUtil::toDto);
@@ -52,12 +55,19 @@ public class ProductService {
                         .map(EntityDtoUtil::toDto));
     }
 
-    public Mono<Void> deleteProduct(String id){
+    public Mono<Void> deleteProduct(String id) {
         return productRepository.deleteById(id);
     }
 
     public Flux<ProductDto> getByPriceRange(Integer min, Integer max) {
         return productRepository.findByPriceBetween(Range.closed(min, max))
                 .map(EntityDtoUtil::toDto);
+    }
+
+    private void throwRandomError() {
+        int number = ThreadLocalRandom.current().nextInt(1, 10);
+        if (number > 5) {
+            throw new RuntimeException("smth went wrong!");
+        }
     }
 }

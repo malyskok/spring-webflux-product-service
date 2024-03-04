@@ -22,7 +22,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    @GetMapping
+    @GetMapping("all")
     public Flux<ProductDto> getAll() {
         return productService.getAll();
     }
