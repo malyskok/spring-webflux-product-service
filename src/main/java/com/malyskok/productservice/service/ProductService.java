@@ -15,6 +15,7 @@ import org.springframework.data.domain.Range;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -23,6 +24,9 @@ public class ProductService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    Sinks.Many<ProductDto> productSink;
 
     public Flux<ProductDto> getAll() {
         return productRepository
@@ -41,7 +45,8 @@ public class ProductService {
         return productDtoMono
                 .map(EntityDtoUtil::toEntity)
                 .flatMap(productRepository::insert)
-                .map(EntityDtoUtil::toDto);
+                .map(EntityDtoUtil::toDto)
+                .doOnNext(productSink::tryEmitNext);
     }
 
     public Mono<ProductDto> updateProduct(String id, Mono<ProductDto> productDtoMono) {

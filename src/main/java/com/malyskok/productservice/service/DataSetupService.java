@@ -31,9 +31,16 @@ public class DataSetupService implements CommandLineRunner {
         ProductDto p4 = new ProductDto("headphone", 100);
 
         Flux.just(p1, p2, p3, p4)
+                .concatWith(newProducts())
                 .flatMap(p -> this.service.insertProduct(Mono.just(p)))
                 .subscribe(System.out::println);
 
+    }
+
+    private Flux<ProductDto> newProducts(){
+        return Flux.range(1, 1000)
+                .delayElements(Duration.ofSeconds(2))
+                .map(i -> new ProductDto("product-" + i, ThreadLocalRandom.current().nextInt(10, 100)));
     }
 
 }
